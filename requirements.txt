@@ -3,5 +3,5 @@ pandas==2.0.0
 streamlit_option_menu==0.3.6
 scikit-learn
 numpy
-opencv-python==4.10.0.84
+opencv-python
 deepface==0.0.81
