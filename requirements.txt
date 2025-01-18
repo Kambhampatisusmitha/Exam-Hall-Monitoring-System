@@ -3,7 +3,7 @@ pandas==2.0.0
 streamlit_option_menu==0.3.6
 scikit-learn
 numpy
-opencv-python
+opencv-python==4.10.0.84
 ultralytics
-opencv-python-headless
+opencv-python-headless==4.8.1.78
 deepface==0.0.81
