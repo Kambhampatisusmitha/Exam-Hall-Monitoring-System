@@ -5,4 +5,5 @@ scikit-learn
 numpy
 opencv-python
 ultralytics
+opencv-python-headless
 deepface==0.0.81
