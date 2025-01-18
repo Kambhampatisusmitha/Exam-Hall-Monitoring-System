@@ -4,4 +4,5 @@ streamlit_option_menu==0.3.6
 scikit-learn
 numpy
 opencv-python
+opencv-contrib-python
 deepface==0.0.81
