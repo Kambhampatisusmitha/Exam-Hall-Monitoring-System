@@ -85,8 +85,6 @@ def admin_home_page():
             temp_file = NamedTemporaryFile(delete=False)
             temp_file.write(uploaded_file.read())
 
-            st.sidebar.success("Video uploaded successfully!")
-
             # Process video and detect emotions
             if temp_file:
                 # Load the video
