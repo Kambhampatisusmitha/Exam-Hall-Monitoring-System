@@ -1,6 +1,11 @@
 import streamlit as st
-import pandas as pd
 from streamlit_option_menu import option_menu
+import cv2
+from deepface import DeepFace
+from tempfile import NamedTemporaryFile
+import os
+
+
 user_data = st.session_state.get('user', None)
 def admin_home_page():
     with st.sidebar:
@@ -74,10 +79,61 @@ def admin_home_page():
             """,
             unsafe_allow_html=True
             )
-        video=st.file_uploader("Upload Video",type=['mp4'])
-        if video:
+        uploaded_file=st.file_uploader("Upload Video",type=['mp4'])
+        if uploaded_file:
             #play video
-            st.video(video)
+            temp_file = NamedTemporaryFile(delete=False)
+            temp_file.write(uploaded_file.read())
+
+            st.sidebar.success("Video uploaded successfully!")
+
+            # Process video and detect emotions
+            if temp_file:
+                # Load the video
+                video_path = temp_file.name
+                cap = cv2.VideoCapture(video_path)
+
+                stframe = st.empty()  # For displaying video frames
+
+                # Load Haarcascade for face detection
+                face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
+
+                while cap.isOpened():
+                    ret, frame = cap.read()
+                    if not ret:
+                        break
+
+                    gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                    rgb_frame = cv2.cvtColor(gray_frame, cv2.COLOR_GRAY2RGB)
+
+                    # Detect faces
+                    faces = face_cascade.detectMultiScale(gray_frame, scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+                    for (x, y, w, h) in faces:
+                        face_roi = rgb_frame[y:y + h, x:x + w]
+                        try:
+                            # Analyze emotion using DeepFace
+                            result = DeepFace.analyze(face_roi, actions=['emotion'], enforce_detection=False)
+                            dominant_emotion = result[0]['dominant_emotion']
+
+                            # Draw rectangle and emotion label
+                            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+                            cv2.putText(frame, dominant_emotion, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
+                        except Exception as e:
+                            print(f"Error analyzing face: {e}")
+
+                    # Convert frame to BGR for Streamlit
+                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+                    # Display frame in Streamlit
+                    stframe.image(frame, channels="RGB", use_column_width=True)
+
+                cap.release()
+                os.unlink(temp_file.name)  # Delete temporary file after processing
+                st.success("Video processing completed!")
+            else:
+                st.warning("Please upload a video file to start emotion detection.")
+
+
     def management():
         st.markdown(
             """
