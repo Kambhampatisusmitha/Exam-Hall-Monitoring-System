@@ -7,3 +7,4 @@ opencv-python==4.9.0.80
 opencv-python-headless==4.8.1.78
 opencv-contrib-python==4.8.1.78
 deepface
+tensorflow==2.15.0
