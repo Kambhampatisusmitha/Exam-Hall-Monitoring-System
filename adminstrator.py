@@ -4,7 +4,8 @@ import cv2
 from deepface import DeepFace
 from tempfile import NamedTemporaryFile
 import os
-
+from tensorflow.keras.models import load_model
+model = load_model('emotion_detection_model.h5')
 
 user_data = st.session_state.get('user', None)
 def admin_home_page():
